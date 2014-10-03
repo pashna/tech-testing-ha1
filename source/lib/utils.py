@@ -37,7 +37,7 @@ def create_pidfile(pidfile_path):
         f.write(pid)
 
 
-def load_config_from_pyfile(filepath):
+def load_config_from_pyfile (filepath):
     """
     Создает Config объект из py файла и загружает в него настройки.
 
