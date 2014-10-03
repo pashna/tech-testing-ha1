@@ -133,6 +133,7 @@ def main_loop(config):
         host=config.QUEUE_HOST, port=config.QUEUE_PORT, space=config.QUEUE_SPACE
     )
 
+
     logger.info('Use tube [{tube}], take timeout={take_timeout}.'.format(
         tube=config.QUEUE_TUBE,
         take_timeout=config.QUEUE_TAKE_TIMEOUT
@@ -285,6 +286,13 @@ def create_pidfile(pidfile_path):
     pid = str(os.getpid())
     with open(pidfile_path, 'w') as f:
         f.write(pid)
+
+def fuckyou():
+    return 5
+
+def fuckmyself():
+    my = fuckyou()
+    return my
 
 
 def main(argv):
