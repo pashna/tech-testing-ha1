@@ -89,23 +89,44 @@ class UtilsTestCase(unittest.TestCase):
         with mock.patch('urllib2.urlopen', mock.Mock(side_effect=error)):
             self.assertFalse(utils.check_network_status(url, timeout))
 
-
-
-
-
-
-"""
-DONT UNDERSTAND HOW THIS FUNC WORK
     def test_parse_cmd_args__alias(self):
         import argparse
 
-        descript = 'myBeautyApp'
+        descr = 'description'
         path = '/file/path'
         pid = 4242
-        args = '%s -c %s -d -P %d' % (path, path, pid)
-        obj = utils.parse_cmd_args(args.split(' ')[1:], descr)
-        self.assertEqual(obj, argparse.Namespace(config=path, daemon=True, pidfile=str(pid)))
-"""
+        args = '%s -c %s -d -P %d' % (descr, path, pid)
+        result = utils.parse_cmd_args(args.split(' ')[1:], descr)
+        self.assertEqual(result, argparse.Namespace(config=path, daemon=True, pidfile=str(pid)))
+
+    """def test_spawn_workers(self):
+        import multiprocessing
+        num = 5
+        utils.spawn_workers(num, mock.Mock(), mock.Mock(), mock.Mock())
+        with mock.patch('multiprocessing.Process', mock.Mock()) as process:
+            self.assertTrue(process.call_count, num)"""
+    #@mock.patch('source.lib.utils.Process')
+    def test_spawn_workers(self):
+        num = 10
+
+        #WHY THIS PATH??????
+        #WHY THIS PATH??????
+        #WHY THIS PATH??????
+        #WHY THIS PATH??????
+        #WHY THIS PATH??????
+        #WHY THIS PATH??????       \/\/\/\/\/\/\/\/ i want multiprocessing.Process
+        with mock.patch("source.lib.utils.Process", mock.Mock()) as process_mock:
+            utils.spawn_workers(num, mock.Mock(), mock.Mock(), mock.Mock())
+            #self.assertTrue(process_mock.called)
+            self.assertEqual(process_mock.call_count, num)
+
+
+
+
+    #def test_get_tube(self):
+
+
+
 
 
 

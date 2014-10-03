@@ -98,9 +98,7 @@ def parse_cmd_args(args, app_description=''):
 
 
 def get_tube(host, port, space, name):
-    queue = tarantool_queue.Queue(
-        host=host, port=port, space=space
-    )
+    queue = tarantool_queue.Queue(host=host, port=port, space=space)
     return queue.tube(name)
 
 
