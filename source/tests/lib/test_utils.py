@@ -43,6 +43,7 @@ class UtilsTestCase(unittest.TestCase):
         with mock.patch('os.fork', mock.Mock(side_effect=oserror)):
             self.assertRaises(Exception, utils.daemonize)
 
+
     def test_demonize__child_exception(self):
         oserror = OSError("err")
         pid = 0
@@ -50,6 +51,7 @@ class UtilsTestCase(unittest.TestCase):
             with mock.patch('os.setsid', mock.Mock()): # as os_setsid:
                 """os_setsid.assert_called_once_with() !!!!!! why don't pass?"""
                 self.assertRaises(Exception, utils.daemonize)
+
 
     def test_create_pidfile(self):
         pid = 4242
@@ -61,6 +63,7 @@ class UtilsTestCase(unittest.TestCase):
 
         m_open.assert_called_once_with(pidfile_path, 'w')
         m_open().write.assert_called_once_with(str(pid))
+
 
     def test_load_config_from_pyfile(self):
         test_path = "source/tests/lib/testfile_load_config_from_pyfile.py"
@@ -75,11 +78,13 @@ class UtilsTestCase(unittest.TestCase):
         self.assertFalse(hasattr(config, "nameFive"))
         self.assertFalse(hasattr(config, "name_six"))
 
+
     def test_check_network_status__ok(self):
         url = "my.url"
         timeout = 5
         with mock.patch('urllib2.urlopen', mock.Mock()):
             self.assertTrue(utils.check_network_status(url, timeout))
+
 
     def test_check_network_status__fail_url(self):
         import urllib2
@@ -88,6 +93,7 @@ class UtilsTestCase(unittest.TestCase):
         error = urllib2.URLError("error")
         with mock.patch('urllib2.urlopen', mock.Mock(side_effect=error)):
             self.assertFalse(utils.check_network_status(url, timeout))
+
 
     def test_parse_cmd_args__alias(self):
         import argparse
@@ -105,7 +111,8 @@ class UtilsTestCase(unittest.TestCase):
         utils.spawn_workers(num, mock.Mock(), mock.Mock(), mock.Mock())
         with mock.patch('multiprocessing.Process', mock.Mock()) as process:
             self.assertTrue(process.call_count, num)"""
-    #@mock.patch('source.lib.utils.Process')
+
+
     def test_spawn_workers(self):
         num = 10
 

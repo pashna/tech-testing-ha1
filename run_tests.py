@@ -11,15 +11,17 @@ from source.tests.test_notification_pusher import NotificationPusherTestCase
 from source.tests.test_redirect_checker import RedirectCheckerTestCase
 from source.tests.lib.test_worker import WorkerTestCase
 from source.tests.lib.test_utils import UtilsTestCase
-
+from source.tests.test_notification_pusher import MainLoopTestCase
+from source.tests.test_notification_pusher import DemonizeTestCase
 
 if __name__ == '__main__':
     suite = unittest.TestSuite((
         unittest.makeSuite(NotificationPusherTestCase),
         unittest.makeSuite(RedirectCheckerTestCase),
         unittest.makeSuite(WorkerTestCase),
-        unittest.makeSuite(UtilsTestCase)
-
+        unittest.makeSuite(UtilsTestCase),
+        unittest.makeSuite(MainLoopTestCase),
+        unittest.makeSuite(DemonizeTestCase)
     ))
     result = unittest.TextTestRunner().run(suite)
     sys.exit(not result.wasSuccessful())

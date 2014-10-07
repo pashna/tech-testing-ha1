@@ -150,6 +150,7 @@ def main_loop(config):
         count=config.WORKER_POOL_SIZE, sleep=config.SLEEP
     ))
 
+
     while run_application:
         free_workers_count = worker_pool.free_count()
 
@@ -286,13 +287,6 @@ def create_pidfile(pidfile_path):
     pid = str(os.getpid())
     with open(pidfile_path, 'w') as f:
         f.write(pid)
-
-def fuckyou():
-    return 5
-
-def fuckmyself():
-    my = fuckyou()
-    return my
 
 
 def main(argv):
