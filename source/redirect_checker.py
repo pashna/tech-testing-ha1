@@ -13,6 +13,8 @@ from lib.worker import worker
 
 logger = logging.getLogger('redirect_checker')
 
+#global run
+app_run = True
 
 def main_loop(config):
     logger.info(
@@ -20,10 +22,13 @@ def main_loop(config):
             config.WORKER_POOL_SIZE, config.SLEEP
         ))
     parent_pid = os.getpid()
-    while True:
+    print("LEN = ", len(active_children()))
+    while app_run:
+        print("check = ", check_network_status(config.CHECK_URL, config.HTTP_TIMEOUT))
         if check_network_status(config.CHECK_URL, config.HTTP_TIMEOUT):
             required_workers_count = config.WORKER_POOL_SIZE - len(
                 active_children())
+            print("required_workers_count = ", required_workers_count)
             if required_workers_count > 0:
                 logger.info(
                     'Spawning {} workers'.format(required_workers_count))
@@ -39,6 +44,7 @@ def main_loop(config):
                 c.terminate()
 
         sleep(config.SLEEP)
+
 
 
 def main(argv):

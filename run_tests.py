@@ -13,6 +13,7 @@ from source.tests.lib.test_worker import WorkerTestCase
 from source.tests.lib.test_utils import UtilsTestCase
 from source.tests.test_notification_pusher import MainLoopTestCase
 from source.tests.test_notification_pusher import DemonizeTestCase
+from source.tests.lib.test_init import InitTestCase
 
 if __name__ == '__main__':
     suite = unittest.TestSuite((
@@ -21,7 +22,8 @@ if __name__ == '__main__':
         unittest.makeSuite(WorkerTestCase),
         unittest.makeSuite(UtilsTestCase),
         unittest.makeSuite(MainLoopTestCase),
-        unittest.makeSuite(DemonizeTestCase)
+        unittest.makeSuite(DemonizeTestCase),
+        unittest.makeSuite(InitTestCase)
     ))
     result = unittest.TextTestRunner().run(suite)
     sys.exit(not result.wasSuccessful())
