@@ -22,9 +22,7 @@ def main_loop(config):
             config.WORKER_POOL_SIZE, config.SLEEP
         ))
     parent_pid = os.getpid()
-    print("LEN = ", len(active_children()))
     while app_run:
-        print("check = ", check_network_status(config.CHECK_URL, config.HTTP_TIMEOUT))
         if check_network_status(config.CHECK_URL, config.HTTP_TIMEOUT):
             required_workers_count = config.WORKER_POOL_SIZE - len(
                 active_children())
