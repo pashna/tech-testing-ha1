@@ -26,7 +26,6 @@ def main_loop(config):
         if check_network_status(config.CHECK_URL, config.HTTP_TIMEOUT):
             required_workers_count = config.WORKER_POOL_SIZE - len(
                 active_children())
-            print("required_workers_count = ", required_workers_count)
             if required_workers_count > 0:
                 logger.info(
                     'Spawning {} workers'.format(required_workers_count))

@@ -1,6 +1,7 @@
 import unittest
 import mock
 import source.notification_pusher as notification_pusher
+from argparse import Namespace
 from source.notification_pusher import create_pidfile
 
 
@@ -122,18 +123,16 @@ class NotificationPusherTestCase(unittest.TestCase):
         notification_pusher.run_application = False
 
 
-    def test_main(self):
+    def test_main__deamon_pidfile(self):
 
-        argv = mock.Mock()
-        argv.deamon = True
-        argv.pidfile = True
+        args = Namespace(config='test', daemon=True, pidfile=True)
 
         config = mock.Mock()
         config.LOGGING = mock.Mock()
 
         main_loop = mock.Mock(side_effect = self.stop_app)
 
-        with mock.patch('source.notification_pusher.parse_cmd_args', argv):
+        with mock.patch('source.notification_pusher.parse_cmd_args', mock.Mock(return_value=args)):
          with mock.patch('source.notification_pusher.daemonize', mock.Mock()) as demonize:
           with mock.patch('source.notification_pusher.create_pidfile', mock.Mock()) as create_pidfile:
            with mock.patch('source.notification_pusher.load_config_from_pyfile', mock.Mock(return_value = config)) as load_config:
@@ -143,13 +142,65 @@ class NotificationPusherTestCase(unittest.TestCase):
                with mock.patch('source.notification_pusher.dictConfig', mock.Mock()):
                 with mock.patch('source.notification_pusher.run_application', True):
                  with mock.patch('source.notification_pusher.main_loop', main_loop):
-                  notification_pusher.main(['-c', 'config', '-d', '-P', 'pidfile'])
+                  notification_pusher.main([1,2,3])
 
         assert demonize.called
         assert create_pidfile.called
         assert load_config.called
         assert main_loop.called
 
+
+    def test_main__nodeamon_pidfile(self):
+
+        args = Namespace(config='test', daemon=False, pidfile=True)
+
+        config = mock.Mock()
+        config.LOGGING = mock.Mock()
+
+        main_loop = mock.Mock(side_effect = self.stop_app)
+
+        with mock.patch('source.notification_pusher.parse_cmd_args', mock.Mock(return_value=args)):
+         with mock.patch('source.notification_pusher.daemonize', mock.Mock()) as demonize:
+          with mock.patch('source.notification_pusher.create_pidfile', mock.Mock()) as create_pidfile:
+           with mock.patch('source.notification_pusher.load_config_from_pyfile', mock.Mock(return_value = config)) as load_config:
+            with mock.patch('source.notification_pusher.os.path.realpath', mock.Mock()):
+             with mock.patch('source.notification_pusher.os.path.expanduser', mock.Mock()):
+              with mock.patch('source.notification_pusher.patch_all', mock.Mock()):
+               with mock.patch('source.notification_pusher.dictConfig', mock.Mock()):
+                with mock.patch('source.notification_pusher.run_application', True):
+                 with mock.patch('source.notification_pusher.main_loop', main_loop):
+                  notification_pusher.main([1,2,3])
+
+        assert not demonize.called
+        assert create_pidfile.called
+        assert load_config.called
+        assert main_loop.called
+
+    def test_main__nodeamon_nopidfile(self):
+
+        args = Namespace(config='test', daemon=False, pidfile=False)
+
+        config = mock.Mock()
+        config.LOGGING = mock.Mock()
+
+        main_loop = mock.Mock(side_effect = self.stop_app)
+
+        with mock.patch('source.notification_pusher.parse_cmd_args', mock.Mock(return_value=args)):
+         with mock.patch('source.notification_pusher.daemonize', mock.Mock()) as demonize:
+          with mock.patch('source.notification_pusher.create_pidfile', mock.Mock()) as create_pidfile:
+           with mock.patch('source.notification_pusher.load_config_from_pyfile', mock.Mock(return_value = config)) as load_config:
+            with mock.patch('source.notification_pusher.os.path.realpath', mock.Mock()):
+             with mock.patch('source.notification_pusher.os.path.expanduser', mock.Mock()):
+              with mock.patch('source.notification_pusher.patch_all', mock.Mock()):
+               with mock.patch('source.notification_pusher.dictConfig', mock.Mock()):
+                with mock.patch('source.notification_pusher.run_application', True):
+                 with mock.patch('source.notification_pusher.main_loop', main_loop):
+                  notification_pusher.main([1,2,3])
+
+        assert not demonize.called
+        assert not create_pidfile.called
+        assert load_config.called
+        assert main_loop.called
 
     def test_main_exceprion(self):
 

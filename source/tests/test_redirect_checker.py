@@ -1,6 +1,7 @@
 import unittest
 from source import redirect_checker
 import mock
+from argparse import Namespace
 
 def stop_app(*args, **kwargs):
     redirect_checker.app_run = False
@@ -36,16 +37,17 @@ class RedirectCheckerTestCase(unittest.TestCase):
 
         assert spawn_workers.called
 
-"""
+
     def test_main_loop__network_fail(self):
         config = mock.Mock()
-        config.WORKER_POOL_SIZE = 4
         config.SLEEP = 1
         config.CHECK_URL = "http://test.ba"
         config.HTTP_TIMEOUT = 30
 
         pid = 4242
-        active_chilren = [mock.Mock(), mock.Mock()]
+        child = mock.Mock()
+        child.terminate = mock.Mock()
+        active_chilren = [child, child]
         check_network_status = mock.Mock(return_value=False)
         sleep = mock.Mock(side_effect=stop_app)
 
@@ -57,6 +59,76 @@ class RedirectCheckerTestCase(unittest.TestCase):
                redirect_checker.main_loop(config=config)
 
         assert sleep.called
-        assert active_chilren[0].called
-        assert active_chilren[1].called
-        """
+        assert (child.terminate.call_count == len(active_chilren))
+
+
+    def test_main__deamon_pidfile(self):
+
+        args = Namespace(config='test', daemon=True, pidfile=True)
+
+        config = mock.Mock()
+
+        main_loop = mock.Mock(side_effect = stop_app)
+
+        with mock.patch('source.redirect_checker.parse_cmd_args', mock.Mock(return_value=args)):
+         with mock.patch('source.redirect_checker.daemonize', mock.Mock()) as demonize:
+          with mock.patch('source.redirect_checker.create_pidfile', mock.Mock()) as create_pidfile:
+           with mock.patch('source.redirect_checker.load_config_from_pyfile', mock.Mock(return_value=config)) as load_config:
+            with mock.patch('source.redirect_checker.os.path.realpath', mock.Mock()):
+             with mock.patch('source.redirect_checker.os.path.expanduser', mock.Mock()):
+              with mock.patch('source.redirect_checker.dictConfig', mock.Mock()):
+               with mock.patch('source.redirect_checker.main_loop', main_loop):
+                  redirect_checker.main([1,2,3])
+
+        assert demonize.called
+        assert create_pidfile.called
+        assert load_config.called
+        assert main_loop.called
+
+
+    def test_main__nodeamon_pidfile(self):
+
+        args = Namespace(config='config', daemon=False, pidfile=True)
+
+        config = mock.Mock()
+
+        main_loop = mock.Mock(side_effect = stop_app)
+
+        with mock.patch('source.redirect_checker.parse_cmd_args', mock.Mock(return_value=args)):
+         with mock.patch('source.redirect_checker.daemonize', mock.Mock()) as demonize:
+          with mock.patch('source.redirect_checker.create_pidfile', mock.Mock()) as create_pidfile:
+           with mock.patch('source.redirect_checker.load_config_from_pyfile', mock.Mock(return_value=config)) as load_config:
+            with mock.patch('source.redirect_checker.os.path.realpath', mock.Mock()):
+             with mock.patch('source.redirect_checker.os.path.expanduser', mock.Mock()):
+              with mock.patch('source.redirect_checker.dictConfig', mock.Mock()):
+               with mock.patch('source.redirect_checker.main_loop', main_loop):
+                  redirect_checker.main([1,2,3])
+
+        assert not demonize.called
+        assert create_pidfile.called
+        assert load_config.called
+        assert main_loop.called
+
+
+    def test_main__deamon_nopidfile(self):
+
+        args = Namespace(config='config', daemon=True, pidfile=False)
+
+        config = mock.Mock()
+
+        main_loop = mock.Mock(side_effect = stop_app)
+
+        with mock.patch('source.redirect_checker.parse_cmd_args', mock.Mock(return_value=args)):
+         with mock.patch('source.redirect_checker.daemonize', mock.Mock()) as demonize:
+          with mock.patch('source.redirect_checker.create_pidfile', mock.Mock()) as create_pidfile:
+           with mock.patch('source.redirect_checker.load_config_from_pyfile', mock.Mock(return_value=config)) as load_config:
+            with mock.patch('source.redirect_checker.os.path.realpath', mock.Mock()):
+             with mock.patch('source.redirect_checker.os.path.expanduser', mock.Mock()):
+              with mock.patch('source.redirect_checker.dictConfig', mock.Mock()):
+               with mock.patch('source.redirect_checker.main_loop', main_loop):
+                  redirect_checker.main([1,2,3])
+
+        assert demonize.called
+        assert not create_pidfile.called
+        assert load_config.called
+        assert main_loop.called
